@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System;
+using System.Collections.Generic;
 using static System.Console;
 
 namespace LabaPiA6
@@ -12,6 +13,16 @@ namespace LabaPiA6
             WriteLine();
             FirstTwo();
             WriteLine();
+            FirstThree();
+            WriteLine();
+            SecondSix();
+            WriteLine();
+            SecondSeven();
+            WriteLine();
+            SecondEight();
+            WriteLine();
+            ThirdSix();
+
         }
 
         struct Contestant
@@ -80,7 +91,7 @@ namespace LabaPiA6
 
         static private void FirstTwo()
         {
-            SwimContestant[] swimContestants = { 
+            SwimContestant[] swimContestants = {
                 new SwimContestant("Ксения", "Шанцю", "Орехова", 1.51),
                 new SwimContestant("София", "Ашдод", "Никонов", 1.33),
                 new SwimContestant("Нина", "Йена", "Захаров", 1.61),
@@ -94,7 +105,7 @@ namespace LabaPiA6
         struct Answer
         {
             private readonly string text;
-            public readonly double Percentage { get; }
+            public readonly double Percentage;
 
             public Answer(string text, double percentage)
             {
@@ -111,8 +122,131 @@ namespace LabaPiA6
         static private void FirstThree()
         {
             Answer[] answers = {
-                new Answer();
+                new Answer("Бабушка", 0.1),
+                new Answer("Дедушка", 0.2),
+                new Answer("Сестра", 0.2),
+                new Answer("Папа", 0.3),
+                new Answer("Внучка", 0.075),
+                new Answer("Внук", 0.05),
+                new Answer("Прабабушка", 0.025),
+                new Answer("Прадедушка", 0.05),
             };
+            var list = answers.OrderByDescending((el) => el.Percentage).Take(5);
+            WriteLine("Ответ\t|Доля");
+            foreach (var item in list)
+                WriteLine($"{item}");
+        }
+
+        struct Jumper
+        {
+            private readonly string surname;
+            private readonly double[] first;
+            private readonly double[] second;
+            public double Result { get => (first.Average() + second.Average()) / 2; }
+
+            public Jumper(string surname, double[] first, double[] second)
+            {
+                this.surname = surname;
+                this.first = first;
+                this.second = second;
+            }
+
+            public override string ToString()
+            {
+                return $"{surname}\t|{first.Average()}\t|{second.Average()}";
+            }
+        }
+
+        static private void SecondSix()
+        {
+            var contestants = new Jumper[5] {
+            new Jumper("Сидорова", new double[5]{ 3, 4, 5, 1, 5}, new double[5]{ 1,3,2,3,4}),
+            new Jumper("Суркова\t", new double[5]{4,1,3,5,1 }, new double[5]{2,3,4,4,3 }),
+            new Jumper("Соколова", new double[5]{3,1,4,2,1 }, new double[5]{4,4,2,2,2 }),
+            new Jumper("Спиридонов", new double[5]{2,2,5,5,5 }, new double[5]{3,1,1,2,4 }),
+            new Jumper("Жуков\t", new double[5]{2,1,1,1,1 }, new double[5]{2,4,5,2,3 }),
+            };
+            WriteLine("Фамилия\t\t|Первый\t|Второй");
+            foreach (var man in contestants.OrderByDescending(x => x.Result))
+                WriteLine(man);
+        }
+
+        enum MatchResult
+        {
+            Lose,
+            None,
+            Win,
+        }
+
+        struct Chesser
+        {
+            private readonly string surname;
+            public readonly double Result;
+
+            public Chesser(string surname, MatchResult[] results)
+            {
+                this.surname = surname;
+                Result = results.Select(x => x switch
+                {
+                    MatchResult.Win => 1,
+                    MatchResult.None => 0.5,
+                    MatchResult.Lose => 0,
+                    _ => throw new NotImplementedException()
+                }).Average();
+            }
+
+            public override string ToString()
+            {
+                return $"{surname}\t|{Result}";
+            }
+        }
+
+        static private void SecondSeven()
+        {
+            var chessers = new Chesser[4]{
+                new Chesser("Белов", new MatchResult[3]{ (MatchResult)1, 0, (MatchResult)1 }),
+                new Chesser("Латышев", new MatchResult[3]{ (MatchResult)1, (MatchResult)2, 0}),
+                new Chesser("Лыков", new MatchResult[3]{ (MatchResult)2, (MatchResult)2, 0}),
+                new Chesser("Зайцев", new MatchResult[3]{ 0, (MatchResult)2, (MatchResult)1}),
+            };
+            WriteLine("Фамилия\t|Баллы");
+            foreach (var man in chessers.OrderByDescending(x => x.Result))
+                WriteLine(man);
+        }
+
+        static readonly Random random = new Random();
+
+        struct Hockeyer
+        {
+            public readonly List<int> Timeouts;
+
+            public Hockeyer(object _ = null)
+            {
+                var times = new int[]{ 2,5,10 };
+                Timeouts = new int[2].Select(_ => times[random.Next(0,3)]).ToList();
+            }
+
+            public override string ToString()
+            {
+                return string.Join(", ", Timeouts);
+            }
+        }
+
+        static private void SecondEight()
+        {
+            WriteLine("Штрафы");
+            foreach (var hock in new Hockeyer[30].Select(x => new Hockeyer(true)).Where(x => x.Timeouts.All(x => x!=10)).OrderByDescending(x => x.Timeouts.Sum()))
+                WriteLine(hock);
+        }
+
+        struct SurvAnswer
+        {
+            private readonly string[] answers;
+        }
+        
+        static private void ThirdSix()
+        {
+
         }
     }
 }
