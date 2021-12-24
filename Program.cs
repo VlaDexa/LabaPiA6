@@ -22,7 +22,6 @@ namespace LabaPiA6
             SecondEight();
             WriteLine();
             ThirdSix();
-
         }
 
         struct Contestant
@@ -241,12 +240,45 @@ namespace LabaPiA6
 
         struct SurvAnswer
         {
-            private readonly string[] answers;
+            public readonly Dictionary<int, string> answers;
+            public SurvAnswer(string first, string second, string third)
+            {
+                answers = new Dictionary<int,string>();
+                if (first != null)
+                    answers.Add(0, first);
+                if (second != null)
+                    answers.Add(1, second);
+                if (third != null)
+                    answers.Add(2, third);
+            }
         }
         
         static private void ThirdSix()
         {
-
+            SurvAnswer[] answers = new SurvAnswer[] {
+                new SurvAnswer("Собака", "Суицидальность", "Национализм"),
+                new SurvAnswer("Муравьи", null, null)
+            };
+            var dict = new Dictionary<string, int>();
+            for (int j = 0; j<3; ++j)
+            {
+                foreach (var answer in answers)
+                    if (answer.answers.ContainsKey(j))
+                    {
+                        var znach = answer.answers[j];
+                        if (dict.ContainsKey(znach))
+                            dict[znach] += 1;
+                        else
+                            dict.Add(znach, 1);
+                    }
+                var all = dict.Values.Sum();
+                var pairs = dict.AsEnumerable().OrderByDescending(x => x.Value).Take(5);
+                WriteLine($"Вопрос №{j+1}");
+                foreach (var pair in pairs)
+                    WriteLine($"{pair.Key}\t{pair.Value / (double)all * 100}%");
+                WriteLine();
+                dict.Clear();
+            }
         }
     }
 }
