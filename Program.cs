@@ -46,7 +46,7 @@ namespace LabaPiA6
 
             public override string ToString()
             {
-                return string.Format("{0}\t|{1}\t\t|{2}\t\t|{3}", surname, community, length_1, length_2);
+                return $"{surname}\t|{community}\t\t|{length_1}\t\t|{length_2}";
             }
         }
 
@@ -96,9 +96,14 @@ namespace LabaPiA6
                 new SwimContestant("Нина", "Йена", "Захаров", 1.61),
             };
             WriteLine("Имя\t|Группа\t|Тренер\t\t|Результат\t|Зачёт");
+            uint good = 0;
             foreach (var swimContestant in swimContestants)
+            {
                 WriteLine($"{swimContestant}");
-            WriteLine($"{swimContestants.Where(el => el.IsGood()).Count()} человек получил зачёт");
+                if (swimContestant.IsGood())
+                    ++good;
+            }
+            WriteLine($"{good} человек получил зачёт");
         }
 
         struct Answer
@@ -141,7 +146,7 @@ namespace LabaPiA6
             private readonly string surname;
             private readonly double[] first;
             private readonly double[] second;
-            public double Result { get => (first.Average() + second.Average()) / 2; }
+            public readonly double Result { get => (first.Average() + second.Average()) / 2; }
 
             public Jumper(string surname, double[] first, double[] second)
             {
@@ -190,7 +195,7 @@ namespace LabaPiA6
                     MatchResult.Win => 1,
                     MatchResult.None => 0.5,
                     MatchResult.Lose => 0,
-                    _ => throw new NotImplementedException()
+                    _ => 0,
                 }).Average();
             }
 
@@ -219,10 +224,10 @@ namespace LabaPiA6
         {
             public readonly List<int> Timeouts;
 
-            public Hockeyer(object _ = null)
+            public Hockeyer(object _)
             {
-                var times = new int[]{ 2,5,10 };
-                Timeouts = new int[2].Select(_ => times[random.Next(0,3)]).ToList();
+                var times = new int[3]{ 2,5,10 };
+                Timeouts = new int[2].Select(_ => times[random.Next(0, times.Length)]).ToList();
             }
 
             public override string ToString()
@@ -234,7 +239,7 @@ namespace LabaPiA6
         static private void SecondEight()
         {
             WriteLine("Штрафы");
-            foreach (var hock in new Hockeyer[30].Select(x => new Hockeyer(true)).Where(x => x.Timeouts.All(x => x!=10)).OrderByDescending(x => x.Timeouts.Sum()))
+            foreach (var hock in new Hockeyer[30].Select(_ => new Hockeyer(true)).Where(x => !x.Timeouts.Contains(10)).OrderByDescending(x => x.Timeouts.Sum()))
                 WriteLine(hock);
         }
 
